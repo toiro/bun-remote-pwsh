@@ -16,7 +16,7 @@
     "CLAUDE.md"
   ],
   "scripts": {
-    "build": "bun build src/lib.ts --outdir dist --target node && bun build src/cli.ts --outdir dist --target node",
+    "build": "bun build src/lib.ts --outdir dist --target node && bun build src/cli.ts --outdir dist --target node && bun build src/remote-pwsh/remote-pwsh.ts --outdir dist/remote-pwsh --target node",
     "build:types": "tsc --emitDeclarationOnly --outDir dist",
     "dev": "bun run src/cli.ts",
     "test": "bun test",
