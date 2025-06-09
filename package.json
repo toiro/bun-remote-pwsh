@@ -6,6 +6,12 @@
   "module": "dist/lib.js",
   "types": "dist/lib.d.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/lib.js",
+      "types": "./dist/lib.d.ts"
+    }
+  },
   "bin": {
     "bun-remote-pwsh": "dist/cli.js"
   },
