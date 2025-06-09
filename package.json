@@ -24,7 +24,8 @@
     "test:integration": "bun test test/integration.test.ts",
     "lint": "biome check src test",
     "format": "biome format --write src test",
-    "prepublishOnly": "bun run build && bun run build:types"
+    "prepare": "bun run build && bun run build:types",
+    "prepublishOnly": "bun run prepare"
   },
   "keywords": [
     "powershell",
