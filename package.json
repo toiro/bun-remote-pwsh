@@ -1,0 +1,66 @@
+{
+  "name": "bun-remote-pwsh",
+  "version": "1.0.0",
+  "description": "PowerShell SSH remoting tool for executing PowerShell scripts on remote Windows hosts via SSH from Bun/TypeScript environment",
+  "main": "dist/lib.js",
+  "module": "dist/lib.js",
+  "types": "dist/lib.d.ts",
+  "type": "module",
+  "bin": {
+    "bun-remote-pwsh": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "resources",
+    "README.md",
+    "CLAUDE.md"
+  ],
+  "scripts": {
+    "build": "bun build src/lib.ts --outdir dist --target node && bun build src/cli.ts --outdir dist --target node",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist",
+    "dev": "bun run src/cli.ts",
+    "test": "bun test",
+    "test:unit": "bun test test/index.test.ts test/remote-pwsh.test.ts",
+    "test:integration": "bun test test/integration.test.ts",
+    "lint": "biome check src test",
+    "format": "biome format --write src test",
+    "prepublishOnly": "bun run build && bun run build:types"
+  },
+  "keywords": [
+    "powershell",
+    "ssh",
+    "remote",
+    "windows",
+    "automation",
+    "bun",
+    "typescript"
+  ],
+  "author": "bun-remote-pwsh",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/bun-remote-pwsh.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/bun-remote-pwsh/issues"
+  },
+  "homepage": "https://github.com/your-org/bun-remote-pwsh#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "iconv-lite": "^0.6.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
