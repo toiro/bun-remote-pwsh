@@ -1,5 +1,5 @@
 import { parseArgs } from "node:util";
-import { RemotePwshSSH } from "./remote-pwsh/remote-pwsh";
+import { createRemotePwshExecutor } from "./remote-pwsh/index.js";
 
 const { values, positionals } = parseArgs({
 	args: Bun.argv.slice(2),
@@ -37,8 +37,12 @@ export async function executeScript(host: string | undefined, user: string | und
 	
 	try {
 		const scriptContent = await Bun.file(scriptPath).text();
-		const remotePwsh = new RemotePwshSSH(host, user, scriptContent);
-		const result = await remotePwsh.invokeAsync();
+		const executor = createRemotePwshExecutor({ 
+			host, 
+			user, 
+			scriptPath: scriptContent 
+		});
+		const result = await executor.invokeAsync();
 		
 		console.log(`Executed on ${result.host} as ${result.user}`);
 		console.log(`Return code: ${result.returnCode}`);

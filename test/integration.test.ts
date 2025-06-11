@@ -1,5 +1,5 @@
 import { test, expect, describe } from "bun:test";
-import { RemotePwshSSH } from "../src/remote-pwsh/remote-pwsh";
+import { createRemotePwshExecutor } from "../src/remote-pwsh/index.js";
 
 interface TestConfig {
 	host: string;
@@ -45,13 +45,13 @@ describe("Integration Tests - SSH Connection", () => {
 			}
 
 			const scriptPath = "../resources/ps-scripts/hostname.ps1";
-			const remotePwsh = new RemotePwshSSH(
-				config.host,
-				config.user,
+			const executor = createRemotePwshExecutor({
+				host: config.host,
+				user: config.user,
 				scriptPath,
-			);
+			});
 
-			const result = await remotePwsh.invokeAsync();
+			const result = await executor.invokeAsync();
 
 			expect(result.host).toBe(config.host);
 			expect(result.user).toBe(config.user);
@@ -80,13 +80,17 @@ describe("Integration Tests - SSH Connection", () => {
 			Write-Output "Date: $date"
 		`;
 
-			const remotePwsh = new RemotePwshSSH(config.host, config.user, command);
-			const result = await remotePwsh.invokeAsync();
+			const executor = createRemotePwshExecutor({
+				host: config.host,
+				user: config.user,
+				scriptPath: command
+			});
+			const result = await executor.invokeAsync();
 
 			expect(result.returnCode).toBe(0);
 			expect(result.stdout).toContain("Host:");
 			expect(result.stdout).toContain("Date:");
-			expect(remotePwsh.lastOutput).toBeDefined();
+			expect(executor.lastOutput).toBeDefined();
 		},
 		30000,
 	);
@@ -101,9 +105,13 @@ describe("Integration Tests - SSH Connection", () => {
 			}
 
 			const command = "Get-NonExistentCommand";
-			const remotePwsh = new RemotePwshSSH(config.host, config.user, command);
+			const executor = createRemotePwshExecutor({
+				host: config.host,
+				user: config.user,
+				scriptPath: command
+			});
 
-			const result = await remotePwsh.invokeAsync();
+			const result = await executor.invokeAsync();
 
 			expect(result.returnCode).not.toBe(0);
 			expect(result.stderr).toBeDefined();
@@ -121,14 +129,14 @@ describe("Integration Tests - SSH Connection", () => {
 			}
 
 			const command = 'Write-Output "テスト出力: 日本語文字列"';
-			const remotePwsh = new RemotePwshSSH(
-				config.host,
-				config.user,
-				command,
-				"utf8",
-			);
+			const executor = createRemotePwshExecutor({
+				host: config.host,
+				user: config.user,
+				scriptPath: command,
+				encode: "utf8"
+			});
 
-			const result = await remotePwsh.invokeAsync();
+			const result = await executor.invokeAsync();
 
 			expect(result.returnCode).toBe(0);
 			expect(result.stdout).toContain("テスト出力");
@@ -154,8 +162,12 @@ describe("Integration Tests - SSH Connection", () => {
 			Write-Output "Completed"
 		`;
 
-			const remotePwsh = new RemotePwshSSH(config.host, config.user, command);
-			const result = await remotePwsh.invokeAsync();
+			const executor = createRemotePwshExecutor({
+				host: config.host,
+				user: config.user,
+				scriptPath: command
+			});
+			const result = await executor.invokeAsync();
 
 			expect(result.returnCode).toBe(0);
 			expect(result.stdout).toContain("Step 1");

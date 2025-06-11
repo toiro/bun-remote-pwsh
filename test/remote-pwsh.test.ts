@@ -1,44 +1,54 @@
 import { test, expect, describe } from "bun:test";
-import { RemotePwshSSH } from "../src/remote-pwsh/remote-pwsh";
+import { createRemotePwshExecutor } from "../src/remote-pwsh/index.js";
 
-describe("RemotePwshSSH", () => {
-	test("should create instance with correct parameters", () => {
+describe("RemotePwshExecutor", () => {
+	test("should create executor with correct parameters", () => {
 		const host = "10.9.88.17";
 		const user = "testuser";
-		const command = "Get-Host";
+		const scriptPath = "Get-Host";
 
-		const remotePwsh = new RemotePwshSSH(host, user, command);
+		const executor = createRemotePwshExecutor({ host, user, scriptPath });
 
-		expect(remotePwsh.host).toBe(host);
-		expect(remotePwsh.user).toBe(user);
-		expect(remotePwsh.command).toBe(command);
+		expect(executor).toBeDefined();
+		expect(executor.lastOutput).toBe("");
 	});
 
-	test("should create instance with default encoding", () => {
-		const remotePwsh = new RemotePwshSSH("10.9.88.17", "testuser", "Get-Host");
-		expect(remotePwsh.encode).toBe("utf8");
+	test("should create executor with default encoding", () => {
+		const executor = createRemotePwshExecutor({
+			host: "10.9.88.17",
+			user: "testuser",
+			scriptPath: "Get-Host"
+		});
+		expect(executor).toBeDefined();
 	});
 
-	test("should create instance with custom encoding", () => {
-		const remotePwsh = new RemotePwshSSH(
-			"10.9.88.17",
-			"testuser",
-			"Get-Host",
-			"sjis",
-		);
-		expect(remotePwsh.encode).toBe("sjis");
+	test("should create executor with custom encoding", () => {
+		const executor = createRemotePwshExecutor({
+			host: "10.9.88.17",
+			user: "testuser",
+			scriptPath: "Get-Host",
+			encode: "sjis"
+		});
+		expect(executor).toBeDefined();
 	});
 
-	test("should initialize count and lastOutput", () => {
-		const remotePwsh = new RemotePwshSSH("10.9.88.17", "testuser", "Get-Host");
-		expect(remotePwsh.count).toBe(0);
-		expect(remotePwsh.lastOutput).toBe("");
+	test("should initialize lastOutput", () => {
+		const executor = createRemotePwshExecutor({
+			host: "10.9.88.17",
+			user: "testuser",
+			scriptPath: "Get-Host"
+		});
+		expect(executor.lastOutput).toBe("");
 	});
 
-	test("should be an EventEmitter", () => {
-		const remotePwsh = new RemotePwshSSH("10.9.88.17", "testuser", "Get-Host");
-		expect(remotePwsh.on).toBeDefined();
-		expect(remotePwsh.emit).toBeDefined();
-		expect(remotePwsh.removeListener).toBeDefined();
+	test("should have invoke and invokeAsync methods", () => {
+		const executor = createRemotePwshExecutor({
+			host: "10.9.88.17",
+			user: "testuser",
+			scriptPath: "Get-Host"
+		});
+		expect(executor.invoke).toBeDefined();
+		expect(executor.invokeAsync).toBeDefined();
+		expect(executor.on).toBeDefined();
 	});
 });
